@@ -9,16 +9,20 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    private val workManager = WorkManager.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        button.setOnClickListener {
-            WorkManager.getInstance().beginUniqueWork(
-                "unique",
-                ExistingWorkPolicy.KEEP,
-                OneTimeWorkRequestBuilder<TestWorker>().build()
-            ).enqueue()
+        val work = OneTimeWorkRequestBuilder<TestWorker>().build()
+
+        btn_start.setOnClickListener {
+            workManager.beginUniqueWork("unique", ExistingWorkPolicy.KEEP, work).enqueue()
+        }
+
+        btn_cancel.setOnClickListener {
+            workManager.cancelWorkById(work.id)
         }
     }
 }
